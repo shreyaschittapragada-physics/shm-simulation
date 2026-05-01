@@ -7,7 +7,21 @@
 
 <body>
 
-<h1>Simple Harmonic Motion – Physics Dashboard</h1>
+<div class="top-panel">
+  <div class="equation">
+    x(t)=A e^{-γt} cos(ωt)
+  </div>
+
+  <div class="params">
+    A, γ, ω, t displayed live
+  </div>
+
+  <div class="insight">
+    Damped SHM with energy loss and phase space evolution
+  </div>
+</div>
+
+<h2>SHM Physics Dashboard</h2>
 
 <div class="grid">
 
@@ -21,13 +35,13 @@
 
 <div class="controls">
 
-  <label>Amplitude</label>
+  <label>A</label>
   <input type="range" id="A" min="20" max="120" value="80">
 
-  <label>Damping</label>
+  <label>γ</label>
   <input type="range" id="b" min="0" max="0.02" step="0.0005" value="0">
 
-  <label>Frequency</label>
+  <label>ω</label>
   <input type="range" id="w" min="0.01" max="0.1" step="0.001" value="0.04">
 
   <button onclick="reset()">Reset</button>
