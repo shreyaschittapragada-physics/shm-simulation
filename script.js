@@ -1,61 +1,65 @@
+let canvas = document.getElementById("graph");
+let ctx = canvas.getContext("2d");
+
+let points = [];
 let t = 0;
 
-let motion = document.getElementById("motion");
-let mctx = motion.getContext("2d");
+function drawAxes() {
+    ctx.strokeStyle = "#ccc";
 
-let energy = document.getElementById("energy");
-let ectx = energy.getContext("2d");
+    // x-axis
+    ctx.beginPath();
+    ctx.moveTo(0, 200);
+    ctx.lineTo(700, 200);
+    ctx.stroke();
 
-let phase = document.getElementById("phase");
-let pctx = phase.getContext("2d");
+    // y-axis
+    ctx.beginPath();
+    ctx.moveTo(350, 0);
+    ctx.lineTo(350, 400);
+    ctx.stroke();
+}
 
-function draw() {
+function drawGraph() {
 
     let A = document.getElementById("A").value;
     let b = document.getElementById("b").value;
-    let w = 0.05;
+    let w = document.getElementById("w").value;
 
-    // position
     let x = A * Math.exp(-b * t) * Math.cos(w * t);
 
-    // velocity (approx derivative)
-    let v = -A * w * Math.exp(-b * t) * Math.sin(w * t);
+    // store point
+    points.push({ t: t, x: x });
 
-    // ENERGY
-    let KE = 0.5 * v * v;
-    let PE = 0.5 * x * x;
-    let TE = KE + PE;
+    // limit memory
+    if (points.length > 500) points.shift();
 
-    // -----------------------
-    // 1. MOTION GRAPH
-    // -----------------------
-    mctx.clearRect(0,0,600,200);
-    mctx.beginPath();
-    mctx.arc(300 + x, 100, 10, 0, Math.PI*2);
-    mctx.fill();
+    ctx.clearRect(0, 0, 700, 400);
 
-    // -----------------------
-    // 2. ENERGY GRAPH
-    // -----------------------
-    ectx.clearRect(0,0,600,200);
+    drawAxes();
 
-    ectx.fillStyle = "red";
-    ectx.fillRect(50, 150-KE*10, 20, KE*10);
+    // draw curve
+    ctx.beginPath();
+    ctx.strokeStyle = "blue";
 
-    ectx.fillStyle = "blue";
-    ectx.fillRect(100, 150-PE*10, 20, PE*10);
+    for (let i = 0; i < points.length; i++) {
 
-    ectx.fillStyle = "green";
-    ectx.fillRect(150, 150-TE*10, 20, TE*10);
+        let px = points[i].t * 2;
+        let py = 200 - points[i].x;
 
-    // -----------------------
-    // 3. PHASE SPACE
-    // -----------------------
-    pctx.fillStyle = "black";
-    pctx.fillRect(150 + x, 150 - v, 2, 2);
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+    }
+
+    ctx.stroke();
 
     t += 1;
-    requestAnimationFrame(draw);
+    requestAnimationFrame(drawGraph);
 }
 
-draw();
+function reset() {
+    points = [];
+    t = 0;
+}
+
+drawGraph();
