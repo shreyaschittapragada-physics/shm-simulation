@@ -1,26 +1,50 @@
 body {
-    font-family: Arial;
-    background: #0d1117;
-    color: white;
-    text-align: center;
+  font-family: Arial;
+  background: #0d1117;
+  color: white;
+  text-align: center;
+}
+
+h2 {
+  margin-top: 10px;
 }
 
 .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 20px;
 }
 
 canvas {
-    background: #161b22;
-    border: 1px solid #30363d;
+  background: #161b22;
+  border: 1px solid #30363d;
 }
 
 .controls {
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.top-panel {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #161b22;
+  padding: 10px;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.equation {
+  font-weight: bold;
+}
+
+.insight {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 5px;
 }
