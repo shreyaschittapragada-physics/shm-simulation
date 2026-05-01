@@ -1,65 +1,74 @@
-let canvas = document.getElementById("graph");
-let ctx = canvas.getContext("2d");
-
-let points = [];
 let t = 0;
 
-function drawAxes() {
-    ctx.strokeStyle = "#ccc";
+let motion = document.getElementById("motion");
+let xt = document.getElementById("xt");
+let energy = document.getElementById("energy");
+let phase = document.getElementById("phase");
 
-    // x-axis
-    ctx.beginPath();
-    ctx.moveTo(0, 200);
-    ctx.lineTo(700, 200);
-    ctx.stroke();
+let mctx = motion.getContext("2d");
+let xctx = xt.getContext("2d");
+let ectx = energy.getContext("2d");
+let pctx = phase.getContext("2d");
 
-    // y-axis
-    ctx.beginPath();
-    ctx.moveTo(350, 0);
-    ctx.lineTo(350, 400);
-    ctx.stroke();
-}
-
-function drawGraph() {
-
-    let A = document.getElementById("A").value;
-    let b = document.getElementById("b").value;
-    let w = document.getElementById("w").value;
-
-    let x = A * Math.exp(-b * t) * Math.cos(w * t);
-
-    // store point
-    points.push({ t: t, x: x });
-
-    // limit memory
-    if (points.length > 500) points.shift();
-
-    ctx.clearRect(0, 0, 700, 400);
-
-    drawAxes();
-
-    // draw curve
-    ctx.beginPath();
-    ctx.strokeStyle = "blue";
-
-    for (let i = 0; i < points.length; i++) {
-
-        let px = points[i].t * 2;
-        let py = 200 - points[i].x;
-
-        if (i === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-    }
-
-    ctx.stroke();
-
-    t += 1;
-    requestAnimationFrame(drawGraph);
-}
+let history = [];
 
 function reset() {
-    points = [];
-    t = 0;
+  history = [];
+  t = 0;
 }
 
-drawGraph();
+function loop() {
+
+  let A = document.getElementById("A").value;
+  let b = document.getElementById("b").value;
+  let w = document.getElementById("w").value;
+
+  let x = A * Math.exp(-b * t) * Math.cos(w * t);
+  let v = -A * w * Math.exp(-b * t) * Math.sin(w * t);
+
+  let KE = 0.5 * v * v;
+  let PE = 0.5 * x * x;
+
+  history.push({ t, x, v, KE, PE });
+
+  if (history.length > 300) history.shift();
+
+  // ---------------- MOTION ----------------
+  mctx.clearRect(0,0,400,200);
+  mctx.fillStyle = "cyan";
+  mctx.beginPath();
+  mctx.arc(200 + x, 100, 8, 0, Math.PI*2);
+  mctx.fill();
+
+  // ---------------- x–t GRAPH ----------------
+  xctx.clearRect(0,0,400,200);
+  xctx.strokeStyle = "lime";
+  xctx.beginPath();
+
+  history.forEach((p,i)=>{
+    let px = i;
+    let py = 100 - p.x;
+    if(i==0) xctx.moveTo(px,py);
+    else xctx.lineTo(px,py);
+  });
+
+  xctx.stroke();
+
+  // ---------------- ENERGY ----------------
+  ectx.clearRect(0,0,400,200);
+
+  ectx.fillStyle = "red";
+  ectx.fillRect(50, 150-KE*5, 20, KE*5);
+
+  ectx.fillStyle = "blue";
+  ectx.fillRect(100, 150-PE*5, 20, PE*5);
+
+  // ---------------- PHASE SPACE ----------------
+  pctx.fillStyle = "white";
+  pctx.fillRect(200 + x, 100 - v, 2, 2);
+
+  t += 1;
+  requestAnimationFrame(loop);
+}
+
+loop();
